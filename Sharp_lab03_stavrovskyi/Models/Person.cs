@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using Sharp_lab03_stavrovskyi.Exceptions;
 
@@ -120,7 +120,7 @@ namespace Sharp_lab03_stavrovskyi.Models
         private void CheckEmail()
         {
             if (!(new EmailAddressAttribute().IsValid(_email)))
-                throw (new Exceptions.Exceptions("The email is invalid"));
+                throw (new Exceptions.EmailException("The email is invalid"));
 
         }
 
