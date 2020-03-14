@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Threading;
 using System.Threading.Tasks;
@@ -184,6 +184,7 @@ namespace Sharp_lab03_stavrovskyi.ViewModels
             {
                 if (!_savedDate.Equals(_date))
                 {
+                    CleanUi();
                     _savedDate = _date;
                     await Task.Run(() => Thread.Sleep(1000));
                     _currentPerson = new Person(_name, _surname, _email, _date);
@@ -206,17 +207,17 @@ namespace Sharp_lab03_stavrovskyi.ViewModels
             }
             catch (NotBornException e)
             {
-                MessageBox.Show("The person is not born yet!");
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 _savedDate = DateTime.Now;
             }
             catch (TooOldException e)
             {
-                MessageBox.Show("The person is too old to be alive!");
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 _savedDate = DateTime.Now;
             }
             catch (EmailException e)
             {
-                MessageBox.Show("The email is not valid!");
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 _savedDate = DateTime.Now;
             }
             LoaderManager.Instance.HideLoader();
@@ -226,6 +227,23 @@ namespace Sharp_lab03_stavrovskyi.ViewModels
         {
             return (_date != null && _name != null && _surname != null && _email != null);
         }
+
+        private async void CleanUi()
+        {
+            await Task.Run((() =>
+            {
+                DateString = "";
+                AgeString = "";
+                WZodiacString = "";
+                CZodiacString = "";
+            }));
+            NameString = "";
+            SurnameString = "";
+            EmailString = "";
+            AdultString = "";
+            AdultString = "";
+        }
+
 
         private bool DateIsValid()
         {
