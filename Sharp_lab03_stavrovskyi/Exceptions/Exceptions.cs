@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 
 namespace Sharp_lab03_stavrovskyi.Exceptions
 {
-    class Exceptions : Exception
+    class EmailException : Exception
     {
-        public Exceptions(string message) : base(message)
+        public EmailException(string message) : base(message)
         {
         }
     }
