@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Sharp_lab02_stavrovskyi
+namespace Sharp_lab03_stavrovskyi
 {
     /// <summary>
     /// Interaction logic for App.xaml

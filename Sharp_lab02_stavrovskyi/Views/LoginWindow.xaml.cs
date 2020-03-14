@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using Sharp_lab02_stavrovskyi.ViewModels;
+using Sharp_lab03_stavrovskyi.ViewModels;
 
-namespace Sharp_lab02_stavrovskyi
+namespace Sharp_lab03_stavrovskyi
 {
     /// <summary>
     /// Interaction logic for LoginWindow.xaml

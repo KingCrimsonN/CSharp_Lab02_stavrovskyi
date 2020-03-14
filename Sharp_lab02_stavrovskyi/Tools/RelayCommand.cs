@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Sharp_lab02_stavrovskyi
+namespace Sharp_lab03_stavrovskyi
 {
     public class RelayCommand<T> : ICommand
     {

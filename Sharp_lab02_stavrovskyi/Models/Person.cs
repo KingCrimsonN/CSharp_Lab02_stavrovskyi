@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Sharp_lab03_stavrovskyi.Exceptions;
 
-namespace Sharp_lab02_stavrovskyi.Models
+namespace Sharp_lab03_stavrovskyi.Models
 {
     class Person
     {
@@ -35,7 +37,7 @@ namespace Sharp_lab02_stavrovskyi.Models
             set { _email = value; }
         }
 
-        public DateTime Birthdate
+        private DateTime Birthdate
         {
             get { return _birthday; }
             set { _birthday = value; }
@@ -78,32 +80,22 @@ namespace Sharp_lab02_stavrovskyi.Models
             _name = name;
             _surname = surname;
             _email = email;
+            CheckEmail();
             _birthday = bd;
             _age = CalculateAge();
+            CheckAge();
             _sunSign = CalculateWZodiac();
             _chineseSign = CalculateCZodiac();
         }
 
-        internal Person(String name, string surname, string email)
+        internal Person(String name, string surname, string email):
+            this(name, surname, email, DateTime.Now)
         {
-            _name = name;
-            _surname = surname;
-            _email = email;
-            _birthday = DateTime.Now;
-            _age = CalculateAge();
-            _sunSign = CalculateWZodiac();
-            _chineseSign = CalculateCZodiac();
         }
 
-        internal Person(String name, string surname, DateTime bd)
+        internal Person(String name, string surname, DateTime bd):
+            this(name, surname, string.Empty, DateTime.Now)
         {
-            _name = name;
-            _surname = surname;
-            _email = string.Empty;
-            _birthday = bd;
-            _age = CalculateAge();
-            _sunSign = CalculateWZodiac();
-            _chineseSign = CalculateCZodiac();
         }
 
         #endregion
@@ -115,6 +107,21 @@ namespace Sharp_lab02_stavrovskyi.Models
             if (DateTime.Now.Month < _birthday.Month || (DateTime.Now.Month == _birthday.Month && DateTime.Now.Day < _birthday.Day))
                 return DateTime.Now.Year - _birthday.Year - 1;
             return DateTime.Now.Year - _birthday.Year;
+        }
+
+        private void CheckAge()
+        {
+            if (_age > 135)
+                throw (new TooOldException("The person is too old to exist"));
+            if (_age < 0)
+                throw (new NotBornException("The person couldn't've been born"));
+        }
+
+        private void CheckEmail()
+        {
+            if (!(new EmailAddressAttribute().IsValid(_email)))
+                throw (new Exceptions.Exceptions("The email is invalid"));
+
         }
 
         private string CalculateCZodiac()

@@ -1,11 +1,13 @@
 ﻿using System;
+using System.CodeDom;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Sharp_lab02_stavrovskyi.Models;
-using Sharp_lab02_stavrovskyi.Tools;
+using Sharp_lab03_stavrovskyi.Exceptions;
+using Sharp_lab03_stavrovskyi.Models;
+using Sharp_lab03_stavrovskyi.Tools;
 
-namespace Sharp_lab02_stavrovskyi.ViewModels
+namespace Sharp_lab03_stavrovskyi.ViewModels
 {
     internal class LoginViewModel : BaseViewModel
     {
@@ -134,7 +136,7 @@ namespace Sharp_lab02_stavrovskyi.ViewModels
             }
         }
 
-       
+
 
         public string CZodiacString
         {
@@ -177,47 +179,61 @@ namespace Sharp_lab02_stavrovskyi.ViewModels
 
         private async void Calculate(object o)
         {
-            if (!DateIsValid())
+            LoaderManager.Instance.ShowLoader();
+            try
             {
-                MessageBox.Show("Invalid date, please try again");
-                return;
-            }
-
-            if (!_savedDate.Equals(_date))
-            {
-                _savedDate = _date;
-                LoaderManager.Instance.ShowLoader();
-                await Task.Run(() => Thread.Sleep(2000));
-                _currentPerson = new Person(_name, _surname, _email, _date);
-                await Task.Run((() =>
+                if (!_savedDate.Equals(_date))
                 {
-                    DateString = "Birthday: " + _date.Day + "." +  _date.Month + "." + _date.Year;
-                    AgeString = "Age: " + _currentPerson.Age;
-                    WZodiacString = "Western Zodiac " + _currentPerson.SunSign;
-                    CZodiacString = "Chinese Zodiac " + _currentPerson.ChineseSign;
-                }));
-                NameString = "Name: " + _currentPerson.Name;
-                SurnameString = "Surname: " + _currentPerson.Surname;
-                EmailString = "Email: " + _currentPerson.Email;
-                AdultString = "Status: ";
-                AdultString += _currentPerson.IsAdult ? "Adult" : "Child";
-                if (_currentPerson.IsBirthday)
-                    MessageBox.Show("Happy Birthday!");
-                else MessageBox.Show("Your age and astrological symbols have been calculated, have a look!");
-                LoaderManager.Instance.HideLoader();
+                    _savedDate = _date;
+                    await Task.Run(() => Thread.Sleep(1000));
+                    _currentPerson = new Person(_name, _surname, _email, _date);
+                    await Task.Run((() =>
+                    {
+                        DateString = "Birthday: " + _date.Day + "." + _date.Month + "." + _date.Year;
+                        AgeString = "Age: " + _currentPerson.Age;
+                        WZodiacString = "Western Zodiac " + _currentPerson.SunSign;
+                        CZodiacString = "Chinese Zodiac " + _currentPerson.ChineseSign;
+                    }));
+                    NameString = "Name: " + _currentPerson.Name;
+                    SurnameString = "Surname: " + _currentPerson.Surname;
+                    EmailString = "Email: " + _currentPerson.Email;
+                    AdultString = "Status: ";
+                    AdultString += _currentPerson.IsAdult ? "Adult" : "Child";
+                    if (_currentPerson.IsBirthday)
+                        MessageBox.Show("Happy Birthday!");
+                    else MessageBox.Show("Your age and astrological symbols have been calculated, have a look!");
+                }
             }
+            catch (NotBornException e)
+            {
+                MessageBox.Show("The person is not born yet!");
+                _savedDate = DateTime.Now;
+            }
+            catch (TooOldException e)
+            {
+                MessageBox.Show("The person is too old to be alive!");
+                _savedDate = DateTime.Now;
+            }
+            catch (EmailException e)
+            {
+                MessageBox.Show("The email is not valid!");
+                _savedDate = DateTime.Now;
+            }
+            LoaderManager.Instance.HideLoader();
         }
 
         public bool CanExecuteCommand()
         {
-            return (_date != null && _name!=null && _surname!=null && _email!=null);
+            return (_date != null && _name != null && _surname != null && _email != null);
         }
 
         private bool DateIsValid()
         {
             int diff = CalculateAge();
-            if (diff < 0 || diff > 135)
-                return false;
+            if (diff < 0)
+                throw (new NotBornException("The person wasn't born yet"));
+            if (diff > 135)
+                throw (new TooOldException("The person is too old to be alive"));
             return true;
         }
 
@@ -228,7 +244,7 @@ namespace Sharp_lab02_stavrovskyi.ViewModels
             return DateTime.Now.Year - _date.Year;
         }
 
-        
+
 
         #endregion
     }
